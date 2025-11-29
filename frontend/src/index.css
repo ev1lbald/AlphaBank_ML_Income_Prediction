@@ -61,25 +61,9 @@ header.app-header {
   gap: 10px;
 }
 
-.logo-mark {
+.logo-icon {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
-  background: var(--alfa-red);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 10px 20px rgba(227, 6, 19, 0.4);
-  position: relative;
-}
-
-.logo-mark::before {
-  content: "";
-  position: absolute;
-  inset: 7px 6px 10px;
-  border: 2px solid #fff;
-  border-bottom-width: 3px;
-  border-radius: 6px;
-  border-top: none;
-  transform: skewX(-8deg);
 }
 
 .logo-text {
