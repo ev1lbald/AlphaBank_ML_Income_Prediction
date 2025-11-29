@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from . import models, schemas, database
-from .ml_engine import model_service
+from .ml_engine import model_service, generate_recommendations
 
 # Create tables on startup
 models.Base.metadata.create_all(bind=database.engine)
@@ -60,24 +60,61 @@ def generate_prediction(client_id: int, req: schemas.PredictRequest, db: Session
         "segment": client.segment
     }
     
-    # Call ML Stub
+    # 1. Generate ML Prediction (Stub)
     prediction_data = model_service.predict(features)
     
-    # In a real app, we would save this prediction to the DB here
-    # For now, we just return it
+    # 2. Generate AI Recommendations (Grok API)
+    # Convert SQLAlchemy model to dict for the LLM service
+    client_dict = {
+        "full_name": client.full_name,
+        "age": client.age,
+        "city": client.city,
+        "segment": client.segment,
+        "income_category": client.income_category
+    }
     
-    # Convert to Pydantic model format
+    # Call LLM
+    recommendations_data = generate_recommendations(client_dict, prediction_data)
+    
+    # In a real app, we would save prediction and recommendations to DB here
+    # For now, just return them merged together (PredictionBase doesn't strictly include recs 
+    # in the schema we defined earlier, but let's check schemas.py to be sure)
+    
+    # Let's assume for this step we return the prediction, and the frontend might need to call 
+    # a separate endpoint OR we enrich the response if we change the schema.
+    # Checking schemas... PredictionBase has 'shap_features', ClientDetail has 'recommendations'.
+    # The current endpoint returns PredictionBase. 
+    
+    # We should probably save the recommendations to the client in DB so that 
+    # subsequent GET /clients/{id} calls see them, OR return a composite object.
+    
+    # Strategy: Update the client in DB with new recommendations
+    # (Simulated for this demo since we don't have a full update flow)
+    
+    # Let's construct a response that matches what the frontend expects.
+    # Frontend expects: 
+    # setClientData({ ...res.data, prediction: predRes.data });
+    # And recommendations are inside clientData.recommendations.
+    
+    # Wait, the current architecture separates Client data (static) from Prediction (dynamic).
+    # But recommendations are conceptually linked to the prediction context.
+    # Let's update the DB record for the client's latest recommendations.
+    
+    # Check if recs exist
+    existing_recs = db.query(models.Recommendation).filter(models.Recommendation.client_id == client_id).first()
+    if existing_recs:
+        existing_recs.products = recommendations_data.get("products", [])
+        existing_recs.advice = recommendations_data.get("advice", [])
+        existing_recs.response_score = recommendations_data.get("response_score", 0.0)
+    else:
+        new_recs = models.Recommendation(
+            client_id=client_id,
+            products=recommendations_data.get("products", []),
+            advice=recommendations_data.get("advice", []),
+            response_score=recommendations_data.get("response_score", 0.0)
+        )
+        db.add(new_recs)
+    
+    db.commit()
+    
     return prediction_data
-
-@app.get("/api/metrics", response_model=List[schemas.ModelMetricBase])
-def get_metrics(db: Session = Depends(database.get_db)):
-    metrics = db.query(models.ModelMetric).all()
-    if not metrics:
-        # Return defaults if empty
-        return [
-            {"name": "MAE", "value": "8 500 ₽", "trend": "-4%", "description": "стабильность"},
-            {"name": "R2", "value": "0.86", "trend": "+2 pp", "description": "Высокая точность"},
-            {"name": "Coverage", "value": "82%", "trend": "+5 pp", "description": "Охват базы"}
-        ]
-    return metrics
-
