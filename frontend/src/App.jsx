@@ -10,6 +10,7 @@ import Toast from './components/Toast';
 
 import './index.css';
 
+// API URL relative for production/docker networking
 const API_URL = '/api';
 
 function App() {
