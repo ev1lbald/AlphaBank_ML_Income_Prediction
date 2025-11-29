@@ -76,7 +76,7 @@ def generate_recommendations(client_data: dict, prediction: dict) -> dict:
 
     try:
         response = client.chat.completions.create(
-            model="x-ai/grok-4.1-fast:free", # Free Grok model on OpenRouter
+            model="google/gemini-2.0-flash-001", # Free, fast & reliable via OpenRouter
             messages=[
                 {"role": "system", "content": "Ты — полезный AI-ассистент, который отвечает строго в формате JSON."},
                 {"role": "user", "content": prompt},
