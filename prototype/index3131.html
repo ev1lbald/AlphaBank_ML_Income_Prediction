@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Альфа-Банк — Прогноз дохода</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-main-row">
+        <div class="logo">
+          <div class="logo-mark"></div>
+          <div class="logo-text">
+            <span>Альфа-Банк</span>
+            <span>Прогноз дохода клиента</span>
+          </div>
+        </div>
+        <div class="header-user">
+          <div class="user-circle">АБ</div>
+          <div>
+            <div>Сотрудник фронт-офиса</div>
+            <div style="font-size:11px;color:var(--text-soft);">
+              demo@alfabank.ru
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header-subtitle">
+        Введите ID клиента или выберите его из списка, примените фильтры и
+        получите прогноз дохода, объяснение и персональные рекомендации.
+      </div>
+
+      <section class="search-panel">
+        <div class="search-row">
+          <form class="search-form" id="searchForm">
+            <div class="field">
+              <label for="clientIdInput">ID клиента</label>
+              <input
+                id="clientIdInput"
+                type="text"
+                placeholder="Например, 102781"
+                autocomplete="off"
+              />
+            </div>
+            <button class="btn btn-primary" type="submit">
+              Найти
+            </button>
+          </form>
+
+          <div class="client-select">
+            <select id="clientSelect">
+              <option value="">Выбрать клиента из списка</option>
+              <option value="10001">10001 — Иван Петров</option>
+              <option value="10002">10002 — Мария Смирнова</option>
+              <option value="10003">10003 — Алексей Иванов</option>
+              <option value="10004">10004 — Ольга Кузнецова</option>
+            </select>
+          </div>
+
+          <button class="btn btn-ghost" type="button" id="resetFiltersBtn">
+            Сбросить фильтры
+          </button>
+        </div>
+
+        <div class="filters-row">
+          <div class="filters-group">
+            <div class="filter-pill">
+              <span>Город</span>
+              <select id="filterCity">
+                <option value="">Все</option>
+                <option value="Москва">Москва</option>
+                <option value="Санкт-Петербург">Санкт-Петербург</option>
+                <option value="Новосибирск">Новосибирск</option>
+                <option value="Другие">Другие</option>
+              </select>
+            </div>
+            <div class="filter-pill">
+              <span>Возраст</span>
+              <select id="filterAge">
+                <option value="">Все</option>
+                <option value="18-25">18–25</option>
+                <option value="26-35">26–35</option>
+                <option value="36-45">36–45</option>
+                <option value="46+">46+</option>
+              </select>
+            </div>
+            <div class="filter-pill">
+              <span>Доход</span>
+              <select id="filterIncome">
+                <option value="">Все</option>
+                <option value="Низкий">Низкий</option>
+                <option value="Средний">Средний</option>
+                <option value="Высокий">Высокий</option>
+                <option value="Премиум">Премиум</option>
+              </select>
+            </div>
+            <div class="filter-pill">
+              <span>Риск</span>
+              <select id="filterRisk">
+                <option value="">Все</option>
+                <option value="Низкий">Низкий</option>
+                <option value="Средний">Средний</option>
+                <option value="Высокий">Высокий</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="applied-filters" id="appliedFilters">
+            Активные фильтры: <strong>нет</strong>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main class="layout">
+      <section class="col">
+        <!-- Forecast card -->
+        <article class="card" id="forecastCard">
+          <header class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="accent-dot"></span>
+                Прогноз дохода
+              </div>
+              <div class="card-subtitle" id="clientSummary">
+                ID клиента не выбран
+              </div>
+            </div>
+            <div class="badge" id="forecastBadge">
+              Модель: demo / v0.1
+            </div>
+          </header>
+
+          <div class="forecast-main">
+            <div class="forecast-figure">
+              <div class="chip">
+                <span class="chip-label">Прогноз на горизонте</span>
+                <span class="chip-value" id="forecastHorizon">
+                  12&nbsp;месяцев
+                </span>
+              </div>
+              <div class="forecast-value" id="forecastValue">
+                — ₽/мес
+              </div>
+              <div class="forecast-chip-row">
+                <div class="chip">
+                  <span class="chip-label">Изменение к текущему</span>
+                  <span
+                    class="chip-value positive"
+                    id="forecastGrowth"
+                  >
+                    —
+                  </span>
+                </div>
+                <div class="chip">
+                  <span class="chip-label">Доверие модели</span>
+                  <span class="chip-value neutral" id="forecastConfidence">
+                    —
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="forecast-context" id="forecastContext">
+              <div>
+                Выберите клиента, чтобы увидеть прогноз дохода и сравнение со
+                средними значениями по сегменту.
+              </div>
+              <div class="forecast-bars">
+                <div style="flex:1;">
+                  <div class="spark-bar">
+                    <div
+                      class="spark-bar-fill"
+                      id="sparkClient"
+                      style="width:50%;"
+                    ></div>
+                  </div>
+                  <div class="spark-bar-label">
+                    Клиент / Средний по сегменту
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SHAP explanations -->
+        <article class="card">
+          <header class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="accent-dot"></span>
+                Факторы, влияющие на прогноз
+              </div>
+              <div class="card-subtitle">
+                На основе признаков из витрины (salary, region, активность и др.)
+              </div>
+            </div>
+            <div class="badge">
+              SHAP &bull; Top&nbsp;5 факторов
+            </div>
+          </header>
+
+          <div class="shap-list" id="shapList">
+            <!-- элементы с объяснениями заполняются из JS -->
+          </div>
+        </article>
+      </section>
+
+      <!-- Right column -->
+      <section class="col">
+        <!-- Recommendations -->
+        <article class="card">
+          <header class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="accent-dot"></span>
+                Персональные рекомендации
+              </div>
+              <div class="card-subtitle">
+                Продукты и финансовые действия под профиль клиента
+              </div>
+            </div>
+            <div class="badge" id="recScore">
+              Вероятность отклика: —
+            </div>
+          </header>
+
+          <div class="rec-columns">
+            <div class="rec-block">
+              <div class="rec-block-title">
+                Продукты
+                <span class="rec-badge">Автогенерация</span>
+              </div>
+              <ul class="rec-list" id="productList">
+                <!-- продукты из JS -->
+              </ul>
+            </div>
+
+            <div class="rec-block">
+              <div class="rec-block-title">
+                Финансовые рекомендации
+                <span class="rec-badge">Advisory</span>
+              </div>
+              <ul class="rec-list" id="adviceList">
+                <!-- советы из JS -->
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Model quality -->
+        <article class="card">
+          <header class="card-header">
+            <div>
+              <div class="card-title">
+                <span class="accent-dot"></span>
+                Качество модели и витрины
+              </div>
+              <div class="card-subtitle">
+                Мониторинг в реальном времени по последним расчётам
+              </div>
+            </div>
+            <div class="badge">
+              Обновлено: сейчас (demo)
+            </div>
+          </header>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-label">MAE (ошибка прогноза)</div>
+              <div class="metric-value-row">
+                <div class="metric-value" id="metricMae">— ₽</div>
+                <div class="metric-trend" id="metricMaeTrend">
+                  —
+                </div>
+              </div>
+              <div class="mini-spark">
+                ▁▂▃▄▅▆▇ — стабильность
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">R² (объяснённая дисперсия)</div>
+              <div class="metric-value-row">
+                <div class="metric-value" id="metricR2">—</div>
+                <div class="metric-trend" id="metricR2Trend">
+                  —
+                </div>
+              </div>
+              <div class="mini-spark">
+                История качества по последним батчам
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">
+                Успешность генерации предложений
+              </div>
+              <div class="metric-value-row">
+                <div class="metric-value" id="metricSuccess">95%</div>
+                <div class="metric-trend" id="metricSuccessTrend">
+                  +3 п.п. к прошлой неделе
+                </div>
+              </div>
+              <div class="mini-spark">
+                ▂▃▅▆▇ — рост конверсии
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Охват клиентской базы</div>
+              <div class="metric-value-row">
+                <div class="metric-value" id="metricCoverage">
+                  82%
+                </div>
+                <div class="metric-trend" id="metricCoverageTrend">
+                  +5 п.п.
+                </div>
+              </div>
+              <div class="mini-spark">
+                Прогноз рассчитан для основных активных клиентов
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <!-- toast -->
+  <div class="status-toast" id="statusToast">
+    <div class="status-dot"></div>
+    <span id="statusText">Сообщение</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
