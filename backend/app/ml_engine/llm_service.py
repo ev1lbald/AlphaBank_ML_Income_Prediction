@@ -89,9 +89,13 @@ def generate_recommendations(client_data: dict, prediction: dict) -> dict:
         )
         
         content = response.choices[0].message.content
+        print(f"AI Raw Response: {content}") # LOGGING ADDED
+        
         # Cleanup JSON
         clean_content = content.replace("```json", "").replace("```", "").strip()
-        return json.loads(clean_content)
+        data = json.loads(clean_content)
+        print(f"AI Parsed Data: {data}") # LOGGING ADDED
+        return data
 
     except Exception as e:
         print(f"Error generating recommendations via Grok (OpenRouter): {e}")
