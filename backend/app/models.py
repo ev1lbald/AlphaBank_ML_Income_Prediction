@@ -7,6 +7,9 @@ class Client(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     
+    # Target variable (Real Income)
+    target = Column(Float, nullable=True)
+
     # Demographics
     age = Column(Integer, nullable=True)
     gender = Column(Integer, nullable=True) # 0/1

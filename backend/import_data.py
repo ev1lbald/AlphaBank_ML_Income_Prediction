@@ -49,6 +49,7 @@ def import_data(csv_path: str):
             # Mapping CSV columns to Model fields
             client = models.Client(
                 id=client_id,
+                target=clean_float(row.get('target')), # Added target
                 age=clean_int(row.get('age')),
                 gender=clean_int(row.get('gender')),
                 city=str(row.get('city_smart_name', 'Unknown')),
@@ -105,4 +106,3 @@ if __name__ == "__main__":
     base_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(base_dir, "data", "users.csv.zip")
     import_data(csv_path)
-

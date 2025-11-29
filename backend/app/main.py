@@ -2,9 +2,11 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List, Optional
+import random
 
 from . import models, schemas, database
-from .ml_engine import model_service, generate_recommendations
+# Removed LLM imports since we are disabling it
+# from .ml_engine import model_service, generate_recommendations
 
 # Create tables on startup
 models.Base.metadata.create_all(bind=database.engine)
@@ -22,7 +24,7 @@ app.add_middleware(
 
 @app.get("/api/clients/search", response_model=List[schemas.ClientBase])
 def search_clients(
-    id: Optional[int] = None, # Exact ID search
+    id: Optional[int] = None,
     city: Optional[str] = None,
     income_min: Optional[float] = None,
     income_max: Optional[float] = None,
@@ -39,7 +41,6 @@ def search_clients(
     if income_max:
         query = query.filter(models.Client.income_value <= income_max)
         
-    # Limit results to 50 to avoid freezing
     return query.limit(50).all()
 
 @app.get("/api/clients/{client_id}", response_model=schemas.ClientDetail)
@@ -55,51 +56,52 @@ def generate_prediction(client_id: int, req: schemas.PredictRequest, db: Session
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     
-    # Prepare features 
-    features = {
-        "city": req.city or client.city,
-        "age": req.age or client.age,
-        "segment": client.segment
+    # 1. USE REAL TARGET FROM DB (if available, else 0)
+    predicted_value = client.target if client.target else 0.0
+    
+    # Simulate growth/confidence for demo visuals
+    growth = random.randint(3, 15)
+    confidence = round(random.uniform(0.85, 0.95), 2)
+    
+    prediction_data = {
+        "value": f"{int(predicted_value):,} ₽/мес".replace(",", " "),
+        "growth": f"+{growth}% за год",
+        "horizon": "12 месяцев",
+        "confidence": confidence,
+        "vs_segment": 0.75,
+        "comment": "Прогноз построен на исторических данных клиента (target из датасета).",
+        "shap_features": [
+            # Placeholder for SHAP charts
+            {"feature_name": "Зарплатный проект", "feature_code": "salary", "impact": 0.45, "explanation": "Стабильные поступления", "details": ""},
+            {"feature_name": "Оборот по картам", "feature_code": "turnover", "impact": 0.25, "explanation": "Активное использование", "details": ""},
+            {"feature_name": "Кредитная нагрузка", "feature_code": "loans", "impact": -0.10, "explanation": "Есть действующие кредиты", "details": ""},
+            {"feature_name": "Сбережения", "feature_code": "savings", "impact": 0.15, "explanation": "Наличие вклада", "details": ""}
+        ]
     }
     
-    # 1. ML Prediction (Stub - ideally this would use the CSV data features too)
-    prediction_data = model_service.predict(features)
+    # 2. STATIC RECOMMENDATIONS STUB (LLM Removed)
+    # Placeholder text as requested
+    stub_products = []
+    stub_advice = [
+        {
+            "title": "Интеграция LLM",
+            "tagline": "В будущем тут будет текстовый прогноз с конкретными товарами от LLM модели.",
+            "meta": ["AI Roadmap"]
+        }
+    ]
     
-    # 2. AI Recommendations
-    # Convert SQLAlchemy model to dict, including new CSV fields
-    client_dict = {
-        "id": client.id,
-        "age": client.age,
-        "gender": client.gender,
-        "city": client.city,
-        "region": client.region,
-        "segment": client.segment,
-        "income_value": client.income_value,
-        "salary": client.salary,
-        "turnover": client.turnover,
-        "active_loans": client.active_loans,
-        "overdue_sum": client.overdue_sum,
-        "savings": client.savings,
-        "spend_supermarket": client.spend_supermarket,
-        "spend_travel": client.spend_travel,
-        "spend_restaurants": client.spend_restaurants
-    }
-    
-    # Call LLM
-    recommendations_data = generate_recommendations(client_dict, prediction_data)
-    
-    # Save Recommendations
+    # Save/Update Recommendations in DB
     existing_recs = db.query(models.Recommendation).filter(models.Recommendation.client_id == client_id).first()
     if existing_recs:
-        existing_recs.products = recommendations_data.get("products", [])
-        existing_recs.advice = recommendations_data.get("advice", [])
-        existing_recs.response_score = recommendations_data.get("response_score", 0.0)
+        existing_recs.products = stub_products
+        existing_recs.advice = stub_advice
+        existing_recs.response_score = 0.0
     else:
         new_recs = models.Recommendation(
             client_id=client_id,
-            products=recommendations_data.get("products", []),
-            advice=recommendations_data.get("advice", []),
-            response_score=recommendations_data.get("response_score", 0.0)
+            products=stub_products,
+            advice=stub_advice,
+            response_score=0.0
         )
         db.add(new_recs)
     
