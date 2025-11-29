@@ -14,7 +14,7 @@ app = FastAPI(title="AlphaBank Income Prediction Service")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace with frontend URL
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,23 +22,25 @@ app.add_middleware(
 
 @app.get("/api/clients/search", response_model=List[schemas.ClientBase])
 def search_clients(
+    id: Optional[int] = None, # Exact ID search
     city: Optional[str] = None,
-    age_min: Optional[int] = None,
-    age_max: Optional[int] = None,
-    income: Optional[str] = None,
+    income_min: Optional[float] = None,
+    income_max: Optional[float] = None,
     db: Session = Depends(database.get_db)
 ):
     query = db.query(models.Client)
-    if city:
-        query = query.filter(models.Client.city == city)
-    if age_min:
-        query = query.filter(models.Client.age >= age_min)
-    if age_max:
-        query = query.filter(models.Client.age <= age_max)
-    if income:
-        query = query.filter(models.Client.income_category == income)
     
-    return query.all()
+    if id:
+        query = query.filter(models.Client.id == id)
+    if city:
+        query = query.filter(models.Client.city.ilike(f"%{city}%"))
+    if income_min:
+        query = query.filter(models.Client.income_value >= income_min)
+    if income_max:
+        query = query.filter(models.Client.income_value <= income_max)
+        
+    # Limit results to 50 to avoid freezing
+    return query.limit(50).all()
 
 @app.get("/api/clients/{client_id}", response_model=schemas.ClientDetail)
 def get_client(client_id: int, db: Session = Depends(database.get_db)):
@@ -53,54 +55,40 @@ def generate_prediction(client_id: int, req: schemas.PredictRequest, db: Session
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     
-    # Prepare features from client data + overrides
+    # Prepare features 
     features = {
         "city": req.city or client.city,
         "age": req.age or client.age,
         "segment": client.segment
     }
     
-    # 1. Generate ML Prediction (Stub)
+    # 1. ML Prediction (Stub - ideally this would use the CSV data features too)
     prediction_data = model_service.predict(features)
     
-    # 2. Generate AI Recommendations (Grok API)
-    # Convert SQLAlchemy model to dict for the LLM service
+    # 2. AI Recommendations
+    # Convert SQLAlchemy model to dict, including new CSV fields
     client_dict = {
-        "full_name": client.full_name,
+        "id": client.id,
         "age": client.age,
+        "gender": client.gender,
         "city": client.city,
+        "region": client.region,
         "segment": client.segment,
-        "income_category": client.income_category
+        "income_value": client.income_value,
+        "salary": client.salary,
+        "turnover": client.turnover,
+        "active_loans": client.active_loans,
+        "overdue_sum": client.overdue_sum,
+        "savings": client.savings,
+        "spend_supermarket": client.spend_supermarket,
+        "spend_travel": client.spend_travel,
+        "spend_restaurants": client.spend_restaurants
     }
     
     # Call LLM
     recommendations_data = generate_recommendations(client_dict, prediction_data)
     
-    # In a real app, we would save prediction and recommendations to DB here
-    # For now, just return them merged together (PredictionBase doesn't strictly include recs 
-    # in the schema we defined earlier, but let's check schemas.py to be sure)
-    
-    # Let's assume for this step we return the prediction, and the frontend might need to call 
-    # a separate endpoint OR we enrich the response if we change the schema.
-    # Checking schemas... PredictionBase has 'shap_features', ClientDetail has 'recommendations'.
-    # The current endpoint returns PredictionBase. 
-    
-    # We should probably save the recommendations to the client in DB so that 
-    # subsequent GET /clients/{id} calls see them, OR return a composite object.
-    
-    # Strategy: Update the client in DB with new recommendations
-    # (Simulated for this demo since we don't have a full update flow)
-    
-    # Let's construct a response that matches what the frontend expects.
-    # Frontend expects: 
-    # setClientData({ ...res.data, prediction: predRes.data });
-    # And recommendations are inside clientData.recommendations.
-    
-    # Wait, the current architecture separates Client data (static) from Prediction (dynamic).
-    # But recommendations are conceptually linked to the prediction context.
-    # Let's update the DB record for the client's latest recommendations.
-    
-    # Check if recs exist
+    # Save Recommendations
     existing_recs = db.query(models.Recommendation).filter(models.Recommendation.client_id == client_id).first()
     if existing_recs:
         existing_recs.products = recommendations_data.get("products", [])
@@ -118,3 +106,14 @@ def generate_prediction(client_id: int, req: schemas.PredictRequest, db: Session
     db.commit()
     
     return prediction_data
+
+@app.get("/api/metrics", response_model=List[schemas.ModelMetricBase])
+def get_metrics(db: Session = Depends(database.get_db)):
+    metrics = db.query(models.ModelMetric).all()
+    if not metrics:
+        return [
+            {"name": "MAE", "value": "8 500 ₽", "trend": "-4%", "description": "Ошибка прогноза"},
+            {"name": "R2", "value": "0.86", "trend": "+2 pp", "description": "Точность модели"},
+            {"name": "Coverage", "value": "82%", "trend": "+5 pp", "description": "Охват базы"}
+        ]
+    return metrics

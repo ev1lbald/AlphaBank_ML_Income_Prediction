@@ -33,12 +33,23 @@ class RecommendationBase(BaseModel):
 
 class ClientBase(BaseModel):
     id: int
-    full_name: str
-    segment: str
-    city: str
-    age: int
-    income_category: str
-    risk_level: str
+    full_name: Optional[str]
+    segment: Optional[str]
+    city: Optional[str]
+    region: Optional[str]
+    age: Optional[int]
+    income_category: Optional[str]
+    risk_level: Optional[str]
+    
+    # Financials
+    income_value: Optional[float]
+    salary: Optional[float]
+    turnover: Optional[float]
+    active_loans: Optional[int]
+    savings: Optional[float]
+
+    class Config:
+        from_attributes = True
 
 class ClientDetail(ClientBase):
     prediction: Optional[PredictionBase] = None
@@ -57,7 +68,5 @@ class ModelMetricBase(BaseModel):
         from_attributes = True
 
 class PredictRequest(BaseModel):
-    # Optional overrides for features
     city: Optional[str] = None
     age: Optional[int] = None
-
