@@ -24,9 +24,9 @@ class PredictionBase(BaseModel):
         from_attributes = True
 
 class RecommendationBase(BaseModel):
-    products: List[dict]
-    advice: List[dict]
-    response_score: float
+    products: Optional[List[dict]] = []
+    advice: Optional[List[dict]] = []
+    response_score: Optional[float] = 0.0
 
     class Config:
         from_attributes = True
