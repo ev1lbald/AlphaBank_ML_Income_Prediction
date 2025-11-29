@@ -10,7 +10,7 @@ import Toast from './components/Toast';
 
 import './index.css';
 
-const API_URL = 'http://localhost:8000/api';
+const API_URL = '/api';
 
 function App() {
   const [clientData, setClientData] = useState(null);
