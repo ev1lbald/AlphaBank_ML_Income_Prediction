@@ -2,19 +2,19 @@ import os
 import json
 from openai import OpenAI
 
-# Initialize OpenAI client pointing to xAI API
+# Initialize OpenAI client pointing to OpenRouter API (for free Grok access)
 client = OpenAI(
-    api_key=os.getenv("XAI_API_KEY"),
-    base_url="https://api.x.ai/v1",
+    api_key=os.getenv("XAI_API_KEY"), # Now using OpenRouter Key
+    base_url="https://openrouter.ai/api/v1",
 )
 
 def generate_recommendations(client_data: dict, prediction: dict) -> dict:
     """
-    Generates personalized recommendations using Grok LLM via xAI API.
+    Generates personalized recommendations using Grok 4.1 Fast (Free) via OpenRouter.
     Returns a dict with 'products' and 'advice' lists.
     """
     
-    # Construct prompt with client context (Updated with CSV fields)
+    # Construct prompt with client context
     prompt = f"""
     Ты — профессиональный финансовый консультант Альфа-Банка.
     Твоя задача — сгенерировать персональные рекомендации для клиента на основе его данных и ML-прогноза.
@@ -71,27 +71,32 @@ def generate_recommendations(client_data: dict, prediction: dict) -> dict:
         "response_score": 0.95
     }}
     
-    Отвечай ТОЛЬКО валидным JSON.
+    Отвечай ТОЛЬКО валидным JSON. Не добавляй markdown разметку (```json).
     """
 
     try:
         response = client.chat.completions.create(
-            model="grok-beta", # Or grok-2-latest
+            model="x-ai/grok-4.1-fast:free", # Free Grok model on OpenRouter
             messages=[
                 {"role": "system", "content": "Ты — полезный AI-ассистент, который отвечает строго в формате JSON."},
                 {"role": "user", "content": prompt},
             ],
             temperature=0.7,
+            extra_headers={
+                "HTTP-Referer": "https://alfabank-demo.com", # Required by OpenRouter for free tier sometimes
+                "X-Title": "AlphaBank Demo",
+            }
         )
         
         content = response.choices[0].message.content
+        # Cleanup JSON
         clean_content = content.replace("```json", "").replace("```", "").strip()
         return json.loads(clean_content)
 
     except Exception as e:
-        print(f"Error generating recommendations via Grok: {e}")
+        print(f"Error generating recommendations via Grok (OpenRouter): {e}")
         return {
             "products": [],
-            "advice": [{"title": "Ошибка AI", "tagline": "Не удалось сгенерировать рекомендации.", "meta": []}],
+            "advice": [{"title": "Ошибка AI", "tagline": "Сервис временно недоступен.", "meta": ["Error"]}],
             "response_score": 0.0
         }
