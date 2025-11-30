@@ -668,6 +668,13 @@ header.app-header {
   margin-top: 6px;
 }
 
+.metrics-grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+
 .metric-card {
   border-radius: 12px;
   background: linear-gradient(145deg, #1d2028, #171822);
