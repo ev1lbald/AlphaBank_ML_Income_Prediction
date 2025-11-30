@@ -9,12 +9,14 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Stage 2: Copy to volume
+FROM alpine:latest
 
-COPY --from=build /app/dist /usr/share/nginx/html
-# We will override the default nginx config via docker volume in compose
-EXPOSE 80
+RUN apk --no-cache add ca-certificates
+WORKDIR /usr/share/nginx/html
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/dist .
+
+# Keep container running to maintain volume mount
+CMD ["sh", "-c", "while true; do sleep 3600; done"]
 

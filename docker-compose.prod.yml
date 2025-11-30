@@ -18,6 +18,8 @@ services:
 
   frontend:
     build: ./frontend
+    volumes:
+      - frontend_static:/usr/share/nginx/html
     restart: always
 
   nginx:
@@ -29,6 +31,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+      - frontend_static:/usr/share/nginx/html:ro
     depends_on:
       - backend
       - frontend
@@ -42,4 +45,5 @@ services:
 
 volumes:
   postgres_data_prod:
+  frontend_static:
 
