@@ -38,11 +38,8 @@ export default function ForecastCard({ client, prediction }) {
             Прогноз дохода
           </div>
           <div className="card-subtitle">
-            {client.full_name} · ID {client.id} · {client.segment}
+            ID {client.id}
           </div>
-        </div>
-        <div className="badge">
-          Город: {client.city} · Доход: {client.income_category}
         </div>
       </header>
 
@@ -58,12 +55,6 @@ export default function ForecastCard({ client, prediction }) {
             {prediction.value}
           </div>
           <div className="forecast-chip-row">
-            <div className="chip">
-              <span className="chip-label">Изменение к текущему</span>
-              <span className="chip-value positive">
-                {prediction.growth}
-              </span>
-            </div>
             <div className="chip">
               <span className="chip-label">Доверие модели</span>
               <span className="chip-value neutral">
