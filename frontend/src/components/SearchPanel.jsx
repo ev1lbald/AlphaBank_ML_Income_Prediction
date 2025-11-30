@@ -10,23 +10,19 @@ export default function SearchPanel({ onSearch }) {
   };
 
   return (
-    <section className="search-panel search-panel--simple">
-      <form className="search-panel__form" onSubmit={handleSearch}>
-        <div className="field field--stretch">
-          <label htmlFor="clientIdInput">ID клиента</label>
-          <input
-            id="clientIdInput"
-            type="text"
-            placeholder="Введите ID клиента"
-            autoComplete="off"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-          />
-        </div>
-        <button className="btn btn-primary" type="submit">
-          Найти
-        </button>
-      </form>
-    </section>
+    <form className="search-panel-form-simple" onSubmit={handleSearch}>
+      <input
+        id="clientIdInput"
+        type="text"
+        placeholder="ID КЛИЕНТА"
+        autoComplete="off"
+        value={clientId}
+        onChange={(e) => setClientId(e.target.value)}
+        className="search-input"
+      />
+      <button className="btn btn-primary search-btn" type="submit">
+        НАЙТИ
+      </button>
+    </form>
   );
 }
