@@ -33,7 +33,7 @@ function App() {
     }
   };
 
-  const handleSearch = async (clientId, filters) => {
+  const handleSearch = async (clientId) => {
     if (!clientId) {
       showToast("Введите ID клиента", "error");
       return;
@@ -47,16 +47,11 @@ function App() {
         setClientData(res.data);
         showToast(`Загружены данные клиента ${res.data.full_name}`, "ok");
         
-        // Also trigger a prediction update (simulation of ML call)
-        // In a real app, you might not do this every time, but for demo it shows the "ML" part
+        // Also trigger a prediction update (using the static logic in backend now)
         const predRes = await axios.post(`${API_URL}/predict/${clientId}`, {
-            city: filters.city || undefined,
-            age: filters.age ? parseInt(filters.age.split('-')[0]) : undefined
+            // No filters passed anymore
         });
         
-        // Merge prediction into client data if needed or if the structure differs
-        // The backend GET /clients/{id} already includes the prediction from DB if it exists
-        // But the POST returns a *fresh* prediction. Let's update the view with the fresh one.
         setClientData(prev => ({
             ...prev,
             prediction: predRes.data
@@ -81,7 +76,7 @@ function App() {
 
   const handleReset = () => {
     setClientData(null);
-    showToast("Фильтры сброшены", "ok");
+    showToast("Сброшено", "ok");
   };
 
   const showToast = (message, type) => {
@@ -92,7 +87,8 @@ function App() {
     <div className="app-shell">
       <Header />
       
-      <SearchPanel onSearch={handleSearch} onReset={handleReset} />
+      {/* Removed onReset prop since filters are gone, only passing search handler */}
+      <SearchPanel onSearch={handleSearch} />
 
       <main className="layout">
         <section className="col">
