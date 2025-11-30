@@ -1,6 +1,15 @@
 import React from 'react';
 
 export default function Header({ user }) {
+  const defaultUser = {
+    name: 'Иван Петров',
+    email: 'ivanpetrov@alfabank.ru',
+    role: 'Сотрудник маркетинга',
+    initials: 'ИП'
+  };
+  
+  const displayUser = user || defaultUser;
+
   return (
     <header className="app-header">
       <div className="header-main-row">
@@ -18,16 +27,14 @@ export default function Header({ user }) {
           </div>
         </div>
         
-        {user && (
-          <div className="header-user">
-            <div className="user-avatar">ИП</div>
-            <div style={{textAlign:'left'}}>
-              <div style={{fontWeight: 600, fontSize: '14px'}}>{user.name}</div>
-              <div style={{fontSize: '12px', color: 'var(--text-muted)'}}>Сотрудник маркетинга</div>
-              <div style={{fontSize: '11px', color: 'var(--text-soft)'}}>{user.email}</div>
-            </div>
+        <div className="header-user">
+          <div className="user-avatar">{displayUser.initials}</div>
+          <div className="user-info">
+            <div className="user-name">{displayUser.name}</div>
+            <div className="user-role">{displayUser.role}</div>
+            <div className="user-email">{displayUser.email}</div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
