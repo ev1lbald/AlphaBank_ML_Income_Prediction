@@ -51,17 +51,17 @@ export default function ForecastCard({ client, prediction }) {
               {prediction.horizon}
             </span>
           </div>
-          {/* <div className="forecast-value">
+          <div className="forecast-value">
             {prediction.value}
-          </div> */}
-          {/* <div className="forecast-chip-row">
+          </div>
+          <div className="forecast-chip-row">
             <div className="chip">
               <span className="chip-label">Доверие модели</span>
               <span className="chip-value neutral">
                 {prediction.confidence}
               </span>
             </div>
-          </div> */}
+          </div>
         </div>
 
         <div className="forecast-context">
@@ -76,9 +76,9 @@ export default function ForecastCard({ client, prediction }) {
                   style={{width: `${fillWidth}%`}}
                 ></div>
               </div>
-              {/* <div className="spark-bar-label">
+              <div className="spark-bar-label">
                 Прогноз клиента относительно среднего по сегменту
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
