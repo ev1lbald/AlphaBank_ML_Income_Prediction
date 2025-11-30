@@ -56,6 +56,28 @@
 - Frontend: `http://your-server-ip`
 - API: `http://your-server-ip/api`
 
+## 4.5. Импорт данных в базу
+
+После запуска контейнеров необходимо импортировать клиентские данные:
+
+1. **Убедитесь, что файл данных существует**:
+   ```bash
+   ls -lh backend/data/users.csv.zip
+   ```
+
+2. **Импортируйте данные**:
+   ```bash
+   sudo docker-compose -f docker-compose.prod.yml exec backend python import_data.py
+   ```
+
+   Скрипт импортирует данные из `backend/data/users.csv.zip` в базу данных PostgreSQL.
+
+3. **Проверьте импорт**:
+   ```bash
+   # Подключитесь к базе данных и проверьте количество записей
+   sudo docker-compose -f docker-compose.prod.yml exec db psql -U prod_user -d alphabank_prod -c "SELECT COUNT(*) FROM clients;"
+   ```
+
 ## 5. Настройка SSL (HTTPS)
 
 Для привязки домена и получения SSL сертификата:

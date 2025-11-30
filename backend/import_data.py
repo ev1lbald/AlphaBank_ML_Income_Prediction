@@ -27,9 +27,13 @@ def import_data(csv_path: str):
     
     # Use Pandas for easier handling of large CSVs and NaNs
     try:
+        # pandas can read CSV from zip directly
         df = pd.read_csv(csv_path)
+        print(f"Successfully read CSV with {len(df)} rows")
     except Exception as e:
         print(f"Error reading CSV: {e}")
+        import traceback
+        traceback.print_exc()
         return
 
     db = SessionLocal()
