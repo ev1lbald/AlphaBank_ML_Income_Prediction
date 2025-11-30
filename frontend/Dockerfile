@@ -24,9 +24,13 @@ COPY --from=build /app/dist /source
 COPY docker-entrypoint.sh /custom-entrypoint.sh
 RUN chmod +x /custom-entrypoint.sh
 
-# Verify entrypoint exists and is executable
-RUN ls -la /custom-entrypoint.sh && head -5 /custom-entrypoint.sh && echo "=== Entrypoint verified ==="
+# Verify entrypoint exists and show its content
+RUN echo "=== Verifying entrypoint ===" && \
+    ls -la /custom-entrypoint.sh && \
+    echo "=== First 10 lines of entrypoint ===" && \
+    head -10 /custom-entrypoint.sh && \
+    echo "=== Entrypoint verified ==="
 
-# Don't set ENTRYPOINT here - let docker-compose handle it
-CMD ["/custom-entrypoint.sh"]
+# Set entrypoint directly here
+ENTRYPOINT ["/custom-entrypoint.sh"]
 
