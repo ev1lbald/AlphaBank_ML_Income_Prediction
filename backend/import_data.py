@@ -64,10 +64,10 @@ def import_data(csv_path: str):
             # Upsert (merge) logic: check if exists
             existing = db.query(models.Client).filter(models.Client.id == client_id).first()
             if existing:
-                # Update fields
-                for key, value in client.__dict__.items():
-                    if not key.startswith('_'):
-                        setattr(existing, key, value)
+                # Update only target field if exists
+                existing.target = target_value
+                if not existing.full_name:
+                    existing.full_name = f"Клиент {client_id}"
             else:
                 db.add(client)
             
