@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function MetricsWidget({ metrics }) {
   // Find metrics from the metrics array, or use defaults
-  const defaultMAE = {name: "MAE", value: "8 500 ₽", trend: "-4%", description: "Ошибка прогноза"};
+  const defaultMAE = {name: "WMAE", value: "47 475₽", trend: "-4%", description: "Ошибка прогноза"};
   const defaultQuantileLoss = {name: "Quantile Loss", value: "—", trend: "—", description: "Квантильная ошибка"};
   
   let maeMetric = defaultMAE;
