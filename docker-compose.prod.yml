@@ -24,7 +24,7 @@ services:
 
   frontend:
     build: ./frontend
-    entrypoint: ["/docker-entrypoint.sh"]
+    entrypoint: ["/custom-entrypoint.sh"]
     volumes:
       - frontend_static:/volume
     restart: always

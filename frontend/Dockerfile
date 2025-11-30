@@ -20,12 +20,13 @@ RUN apk --no-cache add ca-certificates
 # Copy built files
 COPY --from=build /app/dist /source
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+# Copy entrypoint script to custom location to avoid conflicts
+COPY docker-entrypoint.sh /custom-entrypoint.sh
+RUN chmod +x /custom-entrypoint.sh
 
 # Verify entrypoint exists and is executable
-RUN ls -la /docker-entrypoint.sh && head -5 /docker-entrypoint.sh
+RUN ls -la /custom-entrypoint.sh && head -5 /custom-entrypoint.sh && echo "=== Entrypoint verified ==="
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Don't set ENTRYPOINT here - let docker-compose handle it
+CMD ["/custom-entrypoint.sh"]
 
