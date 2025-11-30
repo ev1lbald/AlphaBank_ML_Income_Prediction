@@ -50,36 +50,15 @@ def import_data(csv_path: str):
             client_id = clean_int(row.get('id'))
             if client_id == 0: continue # Skip invalid IDs
 
-            # Mapping CSV columns to Model fields
+            # Get target value
+            target_value = clean_float(row.get('target'))
+            
+            # Create client with only id and target from submission.csv
             client = models.Client(
                 id=client_id,
-                target=clean_float(row.get('target')), # Added target
-                age=clean_int(row.get('age')),
-                gender=clean_int(row.get('gender')),
-                city=str(row.get('city_smart_name', 'Unknown')),
-                region=str(row.get('adminarea', 'Unknown')),
-                
-                # Financials
-                income_value=clean_float(row.get('incomeValue')),
-                # incomeValueCategory seems to be mapped to category ID or string, let's use directly
-                income_category=str(row.get('incomeValueCategory', 'Unknown')),
-                salary=clean_float(row.get('salary_6to12m_avg')),
-                turnover=clean_float(row.get('total_rur_amt_cm_avg')),
-                
-                # Risk & Products
-                active_loans=clean_int(row.get('loan_cnt')),
-                overdue_sum=clean_float(row.get('hdb_bki_total_max_overdue_sum')),
-                savings=clean_float(row.get('turn_fdep_db_sum_v2')),
-                
-                # Spending habits
-                spend_supermarket=clean_float(row.get('avg_by_category__amount__sum__cashflowcategory_name__supermarkety')),
-                spend_travel=clean_float(row.get('avg_by_category__amount__sum__cashflowcategory_name__puteshestvija')),
-                spend_restaurants=clean_float(row.get('transaction_category_restaurants_sum_amt_m2')),
-                
-                # Generated/Derived
-                full_name=f"Клиент {client_id}",
-                segment="Массовый" if clean_float(row.get('incomeValue')) < 100000 else "Премиум",
-                risk_level="Высокий" if clean_float(row.get('hdb_bki_total_max_overdue_sum')) > 0 else "Низкий"
+                target=target_value,
+                # Other fields will be None (nullable in model)
+                full_name=f"Клиент {client_id}"
             )
 
             # Upsert (merge) logic: check if exists
@@ -108,5 +87,5 @@ def import_data(csv_path: str):
 if __name__ == "__main__":
     # Use script directory to locate data
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(base_dir, "data", "users.csv.zip")
+    csv_path = os.path.join(base_dir, "data", "submission.csv")
     import_data(csv_path)

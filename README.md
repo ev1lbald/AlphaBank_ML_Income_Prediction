@@ -48,7 +48,7 @@ AlphaBank_ML_Income_Prediction_Model/
 │   │       ├── service.py           # Заглушка для ML модели
 │   │       └── llm_service.py       # Сервис для LLM интеграции (отключен)
 │   ├── data/
-│   │   └── users.csv.zip            # Данные для импорта в БД
+│   │   └── submission.csv           # Данные для импорта в БД (id, target)
 │   ├── Dockerfile                   # Docker образ для backend
 │   ├── import_data.py               # Скрипт импорта данных из CSV в PostgreSQL
 │   ├── requirements.txt             # Python зависимости
@@ -205,7 +205,7 @@ python import_data.py
 docker-compose exec backend python import_data.py
 ```
 
-Скрипт импортирует данные из `backend/data/users.csv.zip` в PostgreSQL.
+Скрипт импортирует данные из `backend/data/submission.csv` в PostgreSQL. Скрипт создает записи клиентов с полями `id` и `target` (остальные поля будут `NULL`). Файл должен содержать колонки: `id` и `target`.
 
 ---
 
@@ -213,14 +213,19 @@ docker-compose exec backend python import_data.py
 
 ### Подготовка данных
 
-1. Поместите CSV файл в `backend/data/users.csv.zip`
+1. Поместите CSV файл в `backend/data/submission.csv`
 2. Файл должен содержать следующие колонки:
-   - `id` - уникальный ID клиента
-   - `target` - целевое значение дохода
-   - `age`, `gender` - демографические данные
-   - `city_smart_name`, `adminarea` - локация
-   - `incomeValue`, `salary_6to12m_avg` - финансовые показатели
-   - И другие поля согласно модели `Client` в `backend/app/models.py`
+   - `id` - уникальный ID клиента (Integer)
+   - `target` - целевое значение дохода (Float)
+   
+**Формат файла:**
+```csv
+id,target
+0,62131.1
+1,51334.363
+3,24868.11
+...
+```
 
 ### Выполнение импорта
 
