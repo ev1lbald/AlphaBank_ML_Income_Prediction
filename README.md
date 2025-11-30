@@ -7,7 +7,7 @@
 
 **Название команды:** ЛАМЕР
 
-| Участник | Роль | Telegramm |
+| Участник | Роль | Telegram |
 |----------|------|-------------|
 | Кирилюк Александр | Backend Developer | @ev1lbald
 | Немцов Роман | Frontend Developer | @rmnemts_off 
