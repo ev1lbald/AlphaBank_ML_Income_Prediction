@@ -12,8 +12,8 @@
 | Кирилюк Александр | Backend Developer | @ev1lbald
 | Немцов Роман | Frontend Developer | @rmnemts_off 
 | Маштаков Егор | ML Engineer | @MashtakovEgor 
-| Симонян Мартин | Data Analyst | @maaati1 
-| Яшин Лев | ML Engineer | @Iev_yashin 
+| Симонян Мартин | Data Sсientist | @maaati1 
+| Яшин Лев | Data Sсientist | @Iev_yashin 
 
 
 
