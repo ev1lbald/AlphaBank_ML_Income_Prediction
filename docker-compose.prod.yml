@@ -25,7 +25,7 @@ services:
   frontend:
     build: ./frontend
     volumes:
-      - frontend_static:/usr/share/nginx/html
+      - frontend_static:/volume
     restart: always
 
   nginx:

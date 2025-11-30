@@ -9,14 +9,15 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Copy to volume
-FROM alpine:latest
+# Stage 2: Serve with nginx
+FROM nginx:alpine
 
-RUN apk --no-cache add ca-certificates
-WORKDIR /usr/share/nginx/html
+# Copy built files
+COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY --from=build /app/dist .
+# Copy files to volume on startup
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
-# Keep container running to maintain volume mount
-CMD ["sh", "-c", "while true; do sleep 3600; done"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
