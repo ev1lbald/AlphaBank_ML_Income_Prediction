@@ -99,7 +99,7 @@ sudo docker-compose -f docker-compose.prod.yml ps
 
 1. **Убедитесь, что файл данных существует**:
    ```bash
-   ls -lh backend/data/users.csv.zip
+   ls -lh backend/data/submission.csv
    ```
 
 2. **Импортируйте данные**:
@@ -107,7 +107,8 @@ sudo docker-compose -f docker-compose.prod.yml ps
    sudo docker-compose -f docker-compose.prod.yml exec backend python import_data.py
    ```
 
-   Скрипт импортирует данные из `backend/data/users.csv.zip` в базу данных PostgreSQL.
+   Скрипт импортирует данные из `backend/data/submission.csv` в базу данных PostgreSQL. 
+   Файл должен содержать колонки: `id` и `target`.
 
 3. **Проверьте импорт**:
    ```bash
