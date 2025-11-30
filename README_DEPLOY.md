@@ -2,6 +2,30 @@
 
 Данная инструкция поможет вам развернуть приложение на удаленном сервере с использованием Git, Docker и Nginx.
 
+## 🚀 Быстрое обновление после изменений
+
+После каждого `git push` на сервере выполните:
+
+```bash
+cd ~/app
+./server-deploy.sh
+```
+
+Или вручную:
+```bash
+cd ~/app
+git pull
+sudo docker-compose -f docker-compose.prod.yml down
+sudo docker-compose -f docker-compose.prod.yml build --no-cache
+sudo docker-compose -f docker-compose.prod.yml up -d
+sudo docker-compose -f docker-compose.prod.yml restart nginx
+```
+
+**Важно:** Скрипт `server-deploy.sh` должен быть скопирован на сервер и иметь права на выполнение:
+```bash
+chmod +x server-deploy.sh
+```
+
 ## 1. Подготовка сервера
 
 1. **Подключитесь к серверу**:
