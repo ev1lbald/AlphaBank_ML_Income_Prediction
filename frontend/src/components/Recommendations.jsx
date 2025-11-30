@@ -20,9 +20,9 @@ export default function Recommendations({ recommendations }) {
             Продукты и финансовые действия под профиль клиента
           </div>
         </div>
-        <div className="badge">
+        {/* <div className="badge">
           Вероятность отклика: {formatPercent(response_score)}
-        </div>
+        </div> */}
       </header>
 
       <div className="rec-columns">
