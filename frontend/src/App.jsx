@@ -48,9 +48,7 @@ function App() {
         showToast(`Загружены данные клиента ${res.data.full_name}`, "ok");
         
         // Also trigger a prediction update (using the static logic in backend now)
-        const predRes = await axios.post(`${API_URL}/predict/${clientId}`, {
-            // No filters passed anymore
-        });
+        const predRes = await axios.post(`${API_URL}/predict/${clientId}`, {});
         
         setClientData(prev => ({
             ...prev,
@@ -58,17 +56,33 @@ function App() {
         }));
 
       } catch (err) {
-        if (err.response && err.response.status === 404) {
-           showToast(`Клиент с ID ${clientId} не найден`, "error");
-           setClientData(null);
+        console.error("API Error:", err);
+        if (err.response) {
+          // Server responded with error
+          const status = err.response.status;
+          const detail = err.response.data?.detail || err.response.data?.message || "Unknown error";
+          
+          if (status === 404) {
+            showToast(`Клиент с ID ${clientId} не найден`, "error");
+            setClientData(null);
+          } else {
+            showToast(`Ошибка сервера (${status}): ${detail}`, "error");
+          }
+        } else if (err.request) {
+          // Request made but no response
+          showToast("Не удалось подключиться к серверу. Проверьте, что бэкенд запущен.", "error");
+          console.error("No response received:", err.request);
         } else {
-           throw err;
+          // Something else happened
+          showToast(`Ошибка: ${err.message}`, "error");
         }
+        setClientData(null);
       }
 
     } catch (err) {
-      console.error(err);
-      showToast("Ошибка при загрузке данных", "error");
+      console.error("Unexpected error:", err);
+      showToast("Неожиданная ошибка при загрузке данных", "error");
+      setClientData(null);
     } finally {
       setLoading(false);
     }
