@@ -29,39 +29,19 @@ export default function Recommendations({ recommendations }) {
         <div className="rec-block">
           <div className="rec-block-title">
             Продукты
-            <span className="rec-badge">Автогенерация</span>
           </div>
-          <ul className="rec-list">
-            {products.map((p, i) => (
-              <li key={i}>
-                <strong>{p.name}</strong>
-                <span className="rec-tagline">{p.tagline}</span>
-                <div className="rec-meta">
-                  {(p.meta || []).map((m, j) => <span key={j}>{m}</span>)}
-                </div>
-              </li>
-            ))}
-            {products.length === 0 && <li>Нет рекомендаций</li>}
-          </ul>
+          <div className="rec-list rec-list--placeholder">
+            <strong className="rec-placeholder">В РАЗРАБОТКЕ</strong>
+          </div>
         </div>
 
         <div className="rec-block">
           <div className="rec-block-title">
             Финансовые рекомендации
-            <span className="rec-badge">Advisory</span>
           </div>
-          <ul className="rec-list">
-            {advice.map((a, i) => (
-               <li key={i}>
-                <strong>{a.title}</strong>
-                <span className="rec-tagline">{a.tagline}</span>
-                <div className="rec-meta">
-                  {(a.meta || []).map((m, j) => <span key={j}>{m}</span>)}
-                </div>
-              </li>
-            ))}
-             {advice.length === 0 && <li>Нет советов</li>}
-          </ul>
+          <div className="rec-list rec-list--placeholder">
+            <strong className="rec-placeholder">В РАЗРАБОТКЕ</strong>
+          </div>
         </div>
       </div>
     </article>

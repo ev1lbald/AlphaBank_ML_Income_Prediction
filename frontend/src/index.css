@@ -115,29 +115,27 @@ header.app-header {
   background: linear-gradient(120deg, #15161c, #181b23);
   border-radius: var(--radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 14px 16px 12px;
+  padding: 18px;
   box-shadow: var(--shadow-soft);
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: center;
 }
 
-.search-row {
+.search-panel--simple {
+  padding: 22px 24px;
+}
+
+.search-panel__form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 620px;
 }
 
-.search-row > * {
-  min-width: 0;
-}
-
-.search-form {
-  display: flex;
-  flex: 2;
-  gap: 8px;
-  min-width: 220px;
+.field--stretch {
+  flex: 1;
+  min-width: 260px;
 }
 
 .field {
@@ -224,86 +222,6 @@ header.app-header {
 
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.04);
-}
-
-.client-select {
-  min-width: 210px;
-  position: relative;
-}
-
-.client-select select {
-  width: 100%;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  padding: 9px 32px 9px 12px;
-  background: #14161c;
-  color: var(--text-main);
-  font-size: 13px;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.client-select::after {
-  content: "▾";
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  color: var(--text-soft);
-  pointer-events: none;
-}
-
-.filters-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.filters-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filter-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed var(--border-subtle);
-  color: var(--text-soft);
-}
-
-.filter-pill select {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text-main);
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.filter-pill span {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 10px;
-  color: #707382;
-}
-
-.applied-filters {
-  font-size: 11px;
-  color: var(--text-soft);
-}
-
-.applied-filters strong {
-  color: var(--text-main);
 }
 
 /* Layout */
@@ -680,6 +598,23 @@ header.app-header {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.rec-list--placeholder {
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+.rec-placeholder {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-main);
+  opacity: 0.4;
 }
 
 /* Metrics */

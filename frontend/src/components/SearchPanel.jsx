@@ -5,14 +5,14 @@ export default function SearchPanel({ onSearch }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // We now pass only clientId, removing filters object completely
-    onSearch(clientId);
+    if (!clientId.trim()) return;
+    onSearch(clientId.trim());
   };
 
   return (
-    <section className="search-panel">
-      <form className="search-row" onSubmit={handleSearch} style={{width: '100%', maxWidth: '600px'}}>
-        <div className="field">
+    <section className="search-panel search-panel--simple">
+      <form className="search-panel__form" onSubmit={handleSearch}>
+        <div className="field field--stretch">
           <label htmlFor="clientIdInput">ID клиента</label>
           <input
             id="clientIdInput"
