@@ -9,8 +9,8 @@
 
 | Участник | Роль | Telegram |
 |----------|------|-------------|
-| Кирилюк Александр | Backend Developer | @ev1lbald
-| Немцов Роман | Frontend Developer | @rmnemts_off 
+| Кирилюк Александр | Data Analyst, Backend Developer | @ev1lbald
+| Немцов Роман | Data Analyst, Frontend Developer | @rmnemts_off 
 | Маштаков Егор | ML Engineer | @MashtakovEgor 
 | Симонян Мартин | Data Sсientist | @maaati1 
 | Яшин Лев | Data Sсientist | @Iev_yashin 
